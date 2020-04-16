@@ -1,0 +1,36 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.3.70'
+}
+
+version = '1.0.2'
+group = 'com.diego.HelloWorld'
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+    compile 'org.slf4j:slf4j-simple:1.8.0-beta4'
+    compile 'io.javalin:javalin:3.8.0'
+    compile group: 'com.heroku.sdk', name: 'heroku-maven-plugin', version: '3.0.2'
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'com.diegomendes.HelloWorldKt'
+    }
+    doFirst {
+        from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    }
+    exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA'
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
