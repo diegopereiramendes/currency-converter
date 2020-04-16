@@ -1,4 +1,4 @@
-package com.diego
+package com.diegomendes
 
 import io.javalin.Javalin
 
