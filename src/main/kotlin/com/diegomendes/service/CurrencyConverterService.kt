@@ -8,6 +8,12 @@ class CurrencyConverterService {
     val currencyConverterDAO = CurrencyConverterDAO();
 
     fun currencyConverter(currencyConverterRequest: CurrencyConverterRequest): CurrencyConverterResponse{
-        return CurrencyConverterResponse.create(currencyConverterRequest)
+        var idTransaction = 0
+        try {
+            idTransaction = currencyConverterDAO.insert(currencyConverterRequest);
+        }catch (e: Exception){
+            e.printStackTrace()
+        }
+        return CurrencyConverterResponse.create(idTransaction, currencyConverterRequest)
     }
 }

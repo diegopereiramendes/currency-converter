@@ -15,8 +15,11 @@ dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
     compile 'org.slf4j:slf4j-simple:1.8.0-beta4'
     compile 'io.javalin:javalin:3.8.0'
-    compile group: 'com.heroku.sdk', name: 'heroku-maven-plugin', version: '3.0.2'
-    compile "khttp:khttp:1.0.0"
+    compile 'com.heroku.sdk:heroku-maven-plugin:3.0.2'
+    compile 'khttp:khttp:1.0.0'
+    compile 'org.jetbrains.exposed:exposed:0.14.1'
+    compile 'com.h2database:h2:1.4.197'
+    compile 'com.zaxxer:HikariCP:2.7.8'
 }
 
 jar {

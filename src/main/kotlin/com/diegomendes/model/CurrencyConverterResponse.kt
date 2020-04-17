@@ -1,31 +1,30 @@
 package com.diegomendes.model
 
-import org.json.JSONObject
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.util.*
+import org.joda.time.DateTime
 
 class CurrencyConverterResponse{
-    val idTransaction : UUID = UUID.randomUUID()
+
+    var idTransaction: Int = 0
     var idUser: Int = 0
     var currencyOrigin : String = ""
-    var valueOrigin : Double = 0.0
+    var valueOrigin : Float = 0f
     var currencyDestiny : String = ""
-    var valueDestiny : Double = 0.0
-    var conversionRate :Double = 0.0
-    var dataHoraUTCTime : String = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm:ss"))
+    var valueDestiny : Float = 0f
+    var conversionRate :Float = 0f
+    var dateTime :DateTime = DateTime.now()
 
     companion object Factory {
-
-        fun create(currencyConverterRequest: CurrencyConverterRequest) : CurrencyConverterResponse {
+        fun create(idTransaction: Int,currencyConverterRequest: CurrencyConverterRequest) : CurrencyConverterResponse {
             val currencyConverterResponse = CurrencyConverterResponse()
 
+            currencyConverterResponse.idTransaction = idTransaction
             currencyConverterResponse.idUser = currencyConverterRequest.idUser
             currencyConverterResponse.currencyOrigin = currencyConverterRequest.currencyOrigin
             currencyConverterResponse.valueOrigin = currencyConverterRequest.valueOrigin
             currencyConverterResponse.currencyDestiny = currencyConverterRequest.currencyDestiny
             currencyConverterResponse.conversionRate = currencyConverterRequest.conversionRate
             currencyConverterResponse.valueDestiny = currencyConverterRequest.valueOrigin * currencyConverterRequest.conversionRate
+            currencyConverterResponse.dateTime = currencyConverterRequest.dateTime
             return currencyConverterResponse
         }
     }
