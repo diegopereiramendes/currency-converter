@@ -1,13 +1,9 @@
 package com.diegomendes
 
-import io.javalin.Javalin
+import com.diegomendes.controller.Server
 
 fun main(args: Array<String>) {
-    val app = Javalin.create().start(getHerokuAssignedPort())
-    app.get("/") { ctx -> ctx.result("Hello World") }
+    Server.start();
 }
 
-fun getHerokuAssignedPort(): Int {
-    val herokuPort = System.getenv("PORT")
-    return herokuPort?.toInt() ?: 7000
-}
+
