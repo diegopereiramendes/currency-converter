@@ -14,5 +14,5 @@ fun ResultRow.toCurrencyConverter() = CurrencyConverter(
     currencyDestiny = Currency.valueOf(this[CurrencyConverterTable.currencyDestiny]),
     valueDestiny = this[CurrencyConverterTable.valueDestiny],
     conversionRate = this[CurrencyConverterTable.conversionRate],
-    dateTime =  this[CurrencyConverterTable.dateTime]
+    dateTime = this[CurrencyConverterTable.dateTime]
 )

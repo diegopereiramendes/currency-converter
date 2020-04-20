@@ -11,27 +11,28 @@ import org.jetbrains.exposed.sql.transactions.transaction
 class CurrencyConverterDAO {
 
     @Throws(Exception::class)
-    fun insert(currencyConverter: CurrencyConverter, rate: Float) : CurrencyConverter {
+    fun insert(
+        currencyConverter: CurrencyConverter, rate: Float
+    ): CurrencyConverter {
         val currencyConverterSaved = transaction {
-            CurrencyConverterTable.insert{
+            CurrencyConverterTable.insert {
                 it[idUser] = currencyConverter.idUser
                 it[currencyOrigin] = currencyConverter.currencyOrigin.name
                 it[valueOrigin] = currencyConverter.valueOrigin
                 it[currencyDestiny] = currencyConverter.currencyDestiny.name
-                it[valueDestiny] = currencyConverter.valueOrigin *  rate
+                it[valueDestiny] = currencyConverter.valueOrigin * rate
                 it[conversionRate] = rate
-            }.let{currencyConverter.fromInsertStatement(it)}
+            }.let { currencyConverter.fromInsertStatement(it) }
         }
-
         return currencyConverterSaved
     }
 
     fun findAllByUser(idUser: Int): List<CurrencyConverter> {
         var transactions = transaction {
-                CurrencyConverterTable.select{CurrencyConverterTable.idUser.eq(idUser)}.map {
-                    it.toCurrencyConverter()
-                }.toList()
-            }
+            CurrencyConverterTable.select { CurrencyConverterTable.idUser.eq(idUser) }.map {
+                it.toCurrencyConverter()
+            }.toList()
+        }
         return transactions
     }
 }

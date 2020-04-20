@@ -5,12 +5,33 @@ import org.jetbrains.exposed.dao.IntIdTable
 import org.jetbrains.exposed.sql.statements.InsertStatement
 import org.joda.time.DateTime
 
-data class CurrencyConverter (val idTransaction: Int, val idUser: Int,
-                              val currencyOrigin: Currency, val valueOrigin: Float,
-                              val currencyDestiny: Currency, val valueDestiny: Float,
-                              val conversionRate: Float, val dateTime: DateTime = DateTime.now())
+data class CurrencyConverter(
+    val idTransaction: Int,
+    val idUser: Int,
+    val currencyOrigin: Currency,
+    val valueOrigin: Float,
+    val currencyDestiny: Currency,
+    val valueDestiny: Float,
+    val conversionRate: Float,
+    val dateTime: DateTime
+) {
+    companion object Factory {
+        fun fromCurrencyConverterRequest(currencyConverterRequest: CurrencyConverterRequest): CurrencyConverter {
+            return CurrencyConverter(
+                idTransaction = 0,
+                idUser = currencyConverterRequest.idUser,
+                currencyOrigin = currencyConverterRequest.currencyOrigin,
+                valueOrigin = currencyConverterRequest.valueOrigin,
+                currencyDestiny = currencyConverterRequest.currencyDestiny,
+                valueDestiny = 0.0f,
+                conversionRate = 0.0f,
+                dateTime = DateTime.now()
+            )
+        }
+    }
+}
 
-object CurrencyConverterTable: IntIdTable() {
+object CurrencyConverterTable : IntIdTable() {
     var idUser = integer("id_user")
     var currencyOrigin = varchar("currency_origin", 3)
     var valueOrigin = float("value_origin")
@@ -28,5 +49,5 @@ fun CurrencyConverter.fromInsertStatement(it: InsertStatement<Number>) = Currenc
     currencyDestiny = Currency.valueOf(it[CurrencyConverterTable.currencyDestiny]),
     valueDestiny = it[CurrencyConverterTable.valueDestiny],
     conversionRate = it[CurrencyConverterTable.conversionRate],
-    dateTime =  it[CurrencyConverterTable.dateTime]
+    dateTime = it[CurrencyConverterTable.dateTime]
 )
