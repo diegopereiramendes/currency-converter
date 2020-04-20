@@ -1,19 +1,24 @@
 package com.diegomendes.service
 
 import com.diegomendes.dao.CurrencyConverterDAO
-import com.diegomendes.model.CurrencyConverterRequest
-import com.diegomendes.model.CurrencyConverterResponse
+import com.diegomendes.exceptions.RecordsNotFound
+import com.diegomendes.model.CurrencyConverter
 
 class CurrencyConverterService {
     val currencyConverterDAO = CurrencyConverterDAO();
 
-    fun currencyConverter(currencyConverterRequest: CurrencyConverterRequest): CurrencyConverterResponse{
-        var idTransaction = 0
-        try {
-            idTransaction = currencyConverterDAO.insert(currencyConverterRequest);
-        }catch (e: Exception){
-            e.printStackTrace()
-        }
-        return CurrencyConverterResponse.create(idTransaction, currencyConverterRequest)
+    fun currencyConverter(
+        currencyConverter: CurrencyConverter,
+        conversionRate: Float
+    ): CurrencyConverter?{
+        return currencyConverterDAO.insert(currencyConverter, conversionRate);
+    }
+
+    fun findAllByUser(idUser: Int):List<CurrencyConverter> {
+        val transactions = currencyConverterDAO.findAllByUser(idUser)
+
+        if(transactions.isEmpty())
+            throw RecordsNotFound("Não foram enconrtadas transações para este usuário: ${idUser}")
+        return transactions
     }
 }

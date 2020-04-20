@@ -1,6 +1,7 @@
 package com.diegomendes.infra
 
 import com.diegomendes.controller.CurrencyConverterController
+import com.diegomendes.exceptions.RecordsNotFound
 import io.javalin.Javalin
 import org.apache.http.HttpStatus
 
@@ -20,9 +21,9 @@ object Server {
             ctx.json(e.message!!)
             ctx.status(HttpStatus.SC_BAD_REQUEST)
         }
-        app.exception(KotlinNullPointerException::class.java) { e, ctx ->
+        app.exception(RecordsNotFound::class.java) { e, ctx ->
             ctx.json(e.message!!)
-            ctx.status(HttpStatus.SC_BAD_REQUEST)
+            ctx.status(HttpStatus.SC_NOT_FOUND)
         }
     }
 

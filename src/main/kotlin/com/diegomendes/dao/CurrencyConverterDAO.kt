@@ -1,25 +1,37 @@
 package com.diegomendes.dao
 
-import com.diegomendes.model.CurrencyConverterRequest
+import com.diegomendes.model.CurrencyConverter
 import com.diegomendes.model.CurrencyConverterTable
+import com.diegomendes.model.fromInsertStatement
+import com.diegomendes.utils.toCurrencyConverter
 import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.joda.time.DateTime
 
 class CurrencyConverterDAO {
 
     @Throws(Exception::class)
-    fun insert(currencyConverterRequest: CurrencyConverterRequest) : Int {
-        var idTransaction = transaction {
+    fun insert(currencyConverter: CurrencyConverter, rate: Float) : CurrencyConverter {
+        val currencyConverterSaved = transaction {
             CurrencyConverterTable.insert{
-                it[idUser] = currencyConverterRequest.idUser
-                it[currencyOrigin] = currencyConverterRequest.currencyOrigin
-                it[valueOrigin] = currencyConverterRequest.valueOrigin
-                it[currencyDestiny] = currencyConverterRequest.currencyDestiny
-                it[conversionRate] = currencyConverterRequest.conversionRate
-                it[datetimeRequest] = currencyConverterRequest.dateTime
-            }get CurrencyConverterTable.id
+                it[idUser] = currencyConverter.idUser
+                it[currencyOrigin] = currencyConverter.currencyOrigin.name
+                it[valueOrigin] = currencyConverter.valueOrigin
+                it[currencyDestiny] = currencyConverter.currencyDestiny.name
+                it[valueDestiny] = currencyConverter.valueOrigin *  rate
+                it[conversionRate] = rate
+            }.let{currencyConverter.fromInsertStatement(it)}
         }
-        return idTransaction.value
+
+        return currencyConverterSaved
+    }
+
+    fun findAllByUser(idUser: Int): List<CurrencyConverter> {
+        var transactions = transaction {
+                CurrencyConverterTable.select{CurrencyConverterTable.idUser.eq(idUser)}.map {
+                    it.toCurrencyConverter()
+                }.toList()
+            }
+        return transactions
     }
 }
