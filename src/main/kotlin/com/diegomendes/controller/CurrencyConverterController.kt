@@ -28,7 +28,6 @@ object CurrencyConverterController {
             val idUser = ctx.queryParam("idUser")!!
             return currencyConverterService.findAllByUser(idUser.toInt())
         }catch (ex: KotlinNullPointerException){
-            var i: Int = 10
             throw Exception("Parâmetros inválidos")
         }
     }
