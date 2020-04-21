@@ -4,23 +4,13 @@ import com.diegomendes.enuns.Currency
 import com.diegomendes.model.CurrencyConverter
 import com.diegomendes.model.CurrencyConverterRequest
 import com.diegomendes.service.CurrencyConverterService
-import io.javalin.apibuilder.ApiBuilder
+import com.diegomendes.service.CurrencyConverterServiceImpl
 import io.javalin.http.Context
 import io.javalin.plugin.openapi.annotations.*
 import khttp.responses.Response
 import org.apache.http.HttpStatus
 
-object CurrencyConverterController {
-    const val RATES_KEY = "rates";
-    val currencyConverterService = CurrencyConverterService();
-
-    fun createRoutes() = run {
-        ApiBuilder.path("convert") {
-            ApiBuilder.get("/:user-id", this::findAllByUser)
-            ApiBuilder.post(this::convertCurrency)
-        }
-    }
-
+class CurrencyConverterController(val service: CurrencyConverterService) {
     @OpenApi(
         summary = "Searches for all a user's currency conversion transactions",
         operationId = "convertCurrency",
@@ -32,10 +22,10 @@ object CurrencyConverterController {
                 "200", [OpenApiContent(CurrencyConverter::class)]
             )]
     )
-    private fun findAllByUser(ctx: Context) {
+    fun findAllByUser(ctx: Context) {
         try {
             val idUser = ctx.pathParam("user-id").toInt()
-            ctx.json(currencyConverterService.findAllByUser(idUser))
+            ctx.json(service.findAllByUser(idUser))
             ctx.status(HttpStatus.SC_OK)
         } catch (ex: KotlinNullPointerException) {
             throw Exception("Parâmetros inválidos")
@@ -56,7 +46,7 @@ object CurrencyConverterController {
                 "200", [OpenApiContent(CurrencyConverter::class)]
             )]
     )
-    private fun convertCurrency(ctx: Context) {
+    fun convertCurrency(ctx: Context) {
         try {
             val body = ctx.bodyAsClass(CurrencyConverterRequest::class.java)
             val response = khttp.get(
@@ -65,7 +55,7 @@ object CurrencyConverterController {
             )
 
             ctx.json(
-                currencyConverterService.convertCurrency(
+                service.convertCurrency(
                     body,
                     getConversionRate(response, body.currencyDestiny)
                 )!!
@@ -82,5 +72,9 @@ object CurrencyConverterController {
         val jsonObject = response.jsonObject
         val jsonObjectRates = jsonObject.optJSONObject(RATES_KEY)
         return jsonObjectRates.getDouble(currencyDestiny.name).toFloat()
+    }
+
+    companion object {
+        const val RATES_KEY = "rates";
     }
 }
