@@ -12,7 +12,7 @@ class CurrencyConverterDAOImpl : CurrencyConverterDAO {
     override fun insert(
         currencyConverter: CurrencyConverter, rate: Float
     ): CurrencyConverter {
-        val currencyConverterSaved = transaction {
+        return transaction {
             CurrencyConverterTable.insert {
                 it[idUser] = currencyConverter.idUser
                 it[currencyOrigin] = currencyConverter.currencyOrigin.name
@@ -22,14 +22,12 @@ class CurrencyConverterDAOImpl : CurrencyConverterDAO {
                 it[conversionRate] = rate
             }.let { currencyConverter.fromInsertStatement(it) }
         }
-        return currencyConverterSaved
     }
 
     override fun findAllByUser(idUser: Int): List<CurrencyConverter> {
-        var transactions = transaction {
+        return transaction {
             CurrencyConverterTable.select { CurrencyConverterTable.idUser.eq(idUser) }
                 .map { row -> CurrencyConverterTable.toDomain(row) }.toList()
         }
-        return transactions
     }
 }
