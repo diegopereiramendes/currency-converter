@@ -1,4 +1,4 @@
-package com.diegomendes.model
+package com.diegomendes.domain
 
 import com.diegomendes.enuns.Currency
 

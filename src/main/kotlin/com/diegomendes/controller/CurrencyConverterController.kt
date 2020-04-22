@@ -1,16 +1,23 @@
 package com.diegomendes.controller
 
 import com.diegomendes.enuns.Currency
-import com.diegomendes.model.CurrencyConverter
-import com.diegomendes.model.CurrencyConverterRequest
+import com.diegomendes.domain.CurrencyConverterRequest
+import com.diegomendes.domain.model.CurrencyConverter
 import com.diegomendes.service.CurrencyConverterService
-import com.diegomendes.service.CurrencyConverterServiceImpl
+import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
 import io.javalin.http.Context
-import io.javalin.plugin.openapi.annotations.*
+import io.javalin.plugin.openapi.annotations.OpenApi
+import io.javalin.plugin.openapi.annotations.OpenApiContent
+import io.javalin.plugin.openapi.annotations.OpenApiParam
+import io.javalin.plugin.openapi.annotations.OpenApiRequestBody
+import io.javalin.plugin.openapi.annotations.OpenApiResponse
 import khttp.responses.Response
 import org.apache.http.HttpStatus
+import org.slf4j.LoggerFactory
 
 class CurrencyConverterController(val service: CurrencyConverterService) {
+    private val logger = LoggerFactory.getLogger(javaClass)
+    
     @OpenApi(
         summary = "Searches for all a user's currency conversion transactions",
         operationId = "convertCurrency",
@@ -23,11 +30,14 @@ class CurrencyConverterController(val service: CurrencyConverterService) {
             )]
     )
     fun findAllByUser(ctx: Context) {
+        val idUser = ctx.pathParam("user-id").toInt()
+
         try {
-            val idUser = ctx.pathParam("user-id").toInt()
             ctx.json(service.findAllByUser(idUser))
             ctx.status(HttpStatus.SC_OK)
+            logger.info("Consulta realizada para usuário: $idUser")
         } catch (ex: KotlinNullPointerException) {
+            logger.error("Erro em consulta realizada para usuário: $idUser")
             throw Exception("Parâmetros inválidos")
         }
     }
@@ -53,17 +63,18 @@ class CurrencyConverterController(val service: CurrencyConverterService) {
                 url = "https://api.exchangeratesapi.io/latest",
                 params = mapOf("base" to body.currencyOrigin.name, "symbols" to body.currencyDestiny.name)
             )
-
-            ctx.json(
-                service.convertCurrency(
-                    body,
-                    getConversionRate(response, body.currencyDestiny)
-                )!!
-            )
+            val currencyConverter = service.convertCurrency(body, getConversionRate(response, body.currencyDestiny))!!
+            ctx.json(currencyConverter)
             ctx.status(HttpStatus.SC_CREATED)
+            logger.info("Nova transação de conversão de moeda realizada e salva: $currencyConverter")
         } catch (ex: IllegalArgumentException) {
+            logger.error("Erro ao realizar a conversão de moeda:")
             throw IllegalArgumentException("Moedas permitidas para conversão: BRL, USD, EUR, JPY")
         } catch (ex: KotlinNullPointerException) {
+            logger.error("Erro ao realizar a conversão de moeda:")
+            throw Exception("Parâmetros inválidos")
+        } catch (ex: MissingKotlinParameterException) {
+            logger.error("Erro ao realizar a conversão de moeda:")
             throw Exception("Parâmetros inválidos")
         }
     }

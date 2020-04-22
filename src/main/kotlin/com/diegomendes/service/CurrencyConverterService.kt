@@ -1,7 +1,7 @@
 package com.diegomendes.service
 
-import com.diegomendes.model.CurrencyConverter
-import com.diegomendes.model.CurrencyConverterRequest
+import com.diegomendes.domain.CurrencyConverterRequest
+import com.diegomendes.domain.model.CurrencyConverter
 
 interface CurrencyConverterService {
     fun convertCurrency(currencyConverterRequest: CurrencyConverterRequest, conversionRate: Float): CurrencyConverter?

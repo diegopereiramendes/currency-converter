@@ -1,6 +1,6 @@
 package com.diegomendes.infra
 
-import com.diegomendes.model.CurrencyConverterTable
+import com.diegomendes.domain.table.CurrencyConverterTable
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import org.jetbrains.exposed.sql.Database
@@ -22,7 +22,7 @@ object Database {
         createTables()
     }
 
-    private fun createTables(){
+    private fun createTables() {
         transaction {
             SchemaUtils.create(CurrencyConverterTable)
         }
