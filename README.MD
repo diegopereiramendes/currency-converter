@@ -1,9 +1,11 @@
 `obs: É necessário a instalação do Docker: https://www.docker.com/, caso ainda não tenha`
 
 ## Contexto da Aplicação
-Implementação de uma API Rest capaz de realizar a conversão entre duas moedas utilizando taxas de conversões atualizadas de um serviço externo. 
-É necessário o ID do usuário que deseja realizar a conversão.
-A API deverá registrar cada transação de conversão com todas as informações relacionadas e também disponibilizar um endpoint para consulta das transações realizadas por um usuário.
+Implementação de uma API Rest capaz de realizar a conversão entre duas moedas utilizando taxas de conversões atualizadas de um serviço externo. É necessário o ID do usuário que deseja realizar a conversão.
+A API deverá registrar cada transação de conversão com todas as informações relacionadas e também disponibilizar um endpoint para consulta das transações realizadas por um usuário, com os requisitos abaixo:
+  - Deve ser possível realizar a conversão entre 4 moedas no mínimo (BRL, USD, EUR, JPY);
+  - As taxas de conversão devem ser obtidas de https://api.exchangeratesapi.io/latest?base=USD
+  - As transações de conversão devem ser persistidas no banco de dados (embedded)
 
 ## Stack
   - Kotlin 1.3.70
