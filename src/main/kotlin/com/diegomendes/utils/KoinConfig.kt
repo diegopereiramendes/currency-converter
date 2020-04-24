@@ -5,7 +5,7 @@ import com.diegomendes.dao.CurrencyConverterDAO
 import com.diegomendes.dao.CurrencyConverterDAOImpl
 import com.diegomendes.service.CurrencyConverterService
 import com.diegomendes.service.CurrencyConverterServiceImpl
-import org.koin.dsl.module.module
+import org.koin.dsl.module
 
 object KoinConfig {
     private val currencyConverterModule = module {

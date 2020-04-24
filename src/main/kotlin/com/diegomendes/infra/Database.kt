@@ -8,8 +8,8 @@ import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 
 object Database {
+    
     fun start() {
-
         val hikariConfig = HikariConfig().apply {
             jdbcUrl = "jdbc:h2:mem:test"
             driverClassName = "org.h2.Driver"

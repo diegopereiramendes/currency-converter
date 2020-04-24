@@ -1,35 +1,27 @@
 package com.diegomendes.infra
 
 import com.diegomendes.controller.CurrencyConverterController
-import com.diegomendes.exceptions.RecordsNotFound
-import com.diegomendes.utils.KoinConfig.allModules
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.javalin.Javalin
 import io.javalin.apibuilder.ApiBuilder.get
-import io.javalin.apibuilder.ApiBuilder.post
 import io.javalin.apibuilder.ApiBuilder.path
+import io.javalin.apibuilder.ApiBuilder.post
 import io.javalin.plugin.json.JavalinJackson
 import io.javalin.plugin.openapi.OpenApiOptions
 import io.javalin.plugin.openapi.OpenApiPlugin
 import io.javalin.plugin.openapi.ui.SwaggerOptions
 import io.swagger.v3.oas.models.info.Info
 import org.apache.http.HttpStatus
-import org.koin.core.KoinProperties
-import org.koin.standalone.KoinComponent
-import org.koin.standalone.StandAloneContext
-import org.koin.standalone.inject
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 import java.text.SimpleDateFormat
+import java.util.Objects
 
 object Server : KoinComponent {
-
     private val currencyConverterController: CurrencyConverterController by inject()
 
-    fun start() {
-        StandAloneContext.startKoin(
-            allModules,
-            KoinProperties(true, true)
-        )
+    fun start(port: Int = 7000): Javalin {
         val app = Javalin.create {
             this.configureMapper()
             it.registerPlugin(getConfiguredOpenApiPlugin())
@@ -39,8 +31,9 @@ object Server : KoinComponent {
                 get("/:user-id", currencyConverterController::findAllByUser)
                 post(currencyConverterController::convertCurrency)
             }
-        }.start(getHerokuAssignedPort())
+        }.start(getPort(port))
         createRoutesErrors(app)
+        return app
     }
 
     private fun createRoutesErrors(app: Javalin) {
@@ -48,10 +41,13 @@ object Server : KoinComponent {
             ctx.json(e.message!!)
             ctx.status(HttpStatus.SC_BAD_REQUEST)
         }
-        app.exception(RecordsNotFound::class.java) { e, ctx ->
-            ctx.json(e.message!!)
-            ctx.status(HttpStatus.SC_NOT_FOUND)
+    }
+
+    private fun getPort(port: Int): Int {
+        if (Objects.nonNull(port)) {
+            return port
         }
+        return getHerokuAssignedPort()
     }
 
     private fun getHerokuAssignedPort(): Int {

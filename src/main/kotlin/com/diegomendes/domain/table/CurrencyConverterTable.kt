@@ -4,8 +4,6 @@ import com.diegomendes.domain.model.CurrencyConverter
 import com.diegomendes.enuns.Currency
 import org.jetbrains.exposed.dao.IntIdTable
 import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.statements.InsertStatement
-import org.joda.time.DateTime
 
 object CurrencyConverterTable : IntIdTable() {
     var idUser = integer("id_user")
@@ -14,7 +12,7 @@ object CurrencyConverterTable : IntIdTable() {
     var currencyDestiny = varchar("currency_destiny", 3)
     var conversionRate = float("convertion_rate")
     var valueDestiny = float("valueDestiny")
-    var dateTime = datetime("datetime").default(DateTime.now())
+    var dateTime = datetime("datetime")
 
     fun toDomain(row: ResultRow): CurrencyConverter {
         return CurrencyConverter(
@@ -29,16 +27,3 @@ object CurrencyConverterTable : IntIdTable() {
         )
     }
 }
-
-
-fun CurrencyConverter.fromInsertStatement(it: InsertStatement<Number>) =
-    CurrencyConverter(
-        idTransaction = it[CurrencyConverterTable.id].value,
-        idUser = it[CurrencyConverterTable.idUser],
-        currencyOrigin = Currency.valueOf(it[CurrencyConverterTable.currencyOrigin]),
-        valueOrigin = it[CurrencyConverterTable.valueOrigin],
-        currencyDestiny = Currency.valueOf(it[CurrencyConverterTable.currencyDestiny]),
-        valueDestiny = it[CurrencyConverterTable.valueDestiny],
-        conversionRate = it[CurrencyConverterTable.conversionRate],
-        dateTime = it[CurrencyConverterTable.dateTime].toDate()
-    )

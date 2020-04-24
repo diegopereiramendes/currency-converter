@@ -25,7 +25,16 @@ dependencies {
     compile "com.fasterxml.jackson.core:jackson-databind:2.10.1"
     compile 'io.swagger.core.v3:swagger-core:2.0.9'
     compile 'org.webjars:swagger-ui:3.24.3'
-    compile "org.koin:koin-core:1.0.2"
+    compile 'org.koin:koin-core:2.1.0'
+    testCompile 'org.koin:koin-test:2.1.0'
+    testCompile 'io.mockk:mockk:1.9.3'
+    testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.6.0'
+    testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: '5.6.0'
+    testRuntime group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.6.0'
+}
+
+test {
+    useJUnitPlatform()
 }
 
 jar {

@@ -1,11 +1,12 @@
 package com.diegomendes.dao
 
 import com.diegomendes.domain.model.CurrencyConverter
+import com.diegomendes.domain.model.fromInsertStatement
 import com.diegomendes.domain.table.CurrencyConverterTable
-import com.diegomendes.domain.table.fromInsertStatement
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.joda.time.DateTime
 
 class CurrencyConverterDAOImpl : CurrencyConverterDAO {
 
@@ -20,6 +21,7 @@ class CurrencyConverterDAOImpl : CurrencyConverterDAO {
                 it[currencyDestiny] = currencyConverter.currencyDestiny.name
                 it[valueDestiny] = currencyConverter.valueOrigin * rate
                 it[conversionRate] = rate
+                it[dateTime] = DateTime.now()
             }.let { currencyConverter.fromInsertStatement(it) }
         }
     }
