@@ -16,12 +16,11 @@ import org.apache.http.HttpStatus
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 import java.text.SimpleDateFormat
-import java.util.Objects
 
 object Server : KoinComponent {
     private val currencyConverterController: CurrencyConverterController by inject()
 
-    fun start(port: Int = 7000): Javalin {
+    fun start(): Javalin {
         val app = Javalin.create {
             this.configureMapper()
             it.registerPlugin(getConfiguredOpenApiPlugin())
@@ -31,7 +30,7 @@ object Server : KoinComponent {
                 get("/:user-id", currencyConverterController::findAllByUser)
                 post(currencyConverterController::convertCurrency)
             }
-        }.start(getPort(port))
+        }.start(getHerokuAssignedPort())
         createRoutesErrors(app)
         return app
     }
@@ -41,13 +40,6 @@ object Server : KoinComponent {
             ctx.json(e.message!!)
             ctx.status(HttpStatus.SC_BAD_REQUEST)
         }
-    }
-
-    private fun getPort(port: Int): Int {
-        if (Objects.nonNull(port)) {
-            return port
-        }
-        return getHerokuAssignedPort()
     }
 
     private fun getHerokuAssignedPort(): Int {

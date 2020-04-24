@@ -39,7 +39,7 @@ test {
 
 jar {
     manifest {
-        attributes 'Main-Class': 'com.diegomendes.HelloWorldKt'
+        attributes 'Main-Class': 'com.diegomendes.MainKt'
     }
     doFirst {
         from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
